@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Jinja Generator - Sequential Values</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea, input { width: 100%; margin-bottom: 10px; padding: 5px; }
+    pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; }
+    button { padding: 10px; width: 100%; }
+  </style>
+</head>
+<body>
+  <h2>Dynamic Jinja `{% if / elif %}` Generator</h2>
+
+  <label>Enter values (one per line):</label>
+  <textarea id="valuesInput" placeholder="100&#10;200&#10;300"></textarea>
+
+  <label>Enter attribute name (e.g., customer.fuse):</label>
+  <input type="text" id="attributeInput" placeholder="customer.fuse" value="customer.fuse">
+
+  <button onclick="generateJinja()">Generate Jinja Script</button>
+
+  <h3>Generated Jinja:</h3>
+  <pre id="jinjaOutput"></pre>
+
+  <script>
+    function generateJinja() {
+      const valuesText = document.getElementById('valuesInput').value.trim();
+      const attribute = document.getElementById('attributeInput').value.trim() || 'customer.fuse';
+      
+      if (!valuesText) {
+        alert("Please enter some values!");
+        return;
+      }
+
+      const values = valuesText.split('\n').map(v => v.trim()).filter(v => v);
+      if (values.length < 2) {
+        alert("Enter at least 2 values to generate sequential mapping.");
+        return;
+      }
+
+      let jinjaScript = "";
+
+      for (let i = 0; i < values.length - 1; i++) {
+        const current = values[i];
+        const next = values[i + 1];
+        if (i === 0) {
+          jinjaScript += `{% if ${attribute} == "${current}" %}\n  ${next}\n`;
+        } else {
+          jinjaScript += `{% elif ${attribute} == "${current}" %}\n  ${next}\n`;
+        }
+      }
+
+      jinjaScript += "{% endif %}";
+      document.getElementById('jinjaOutput').textContent = jinjaScript;
+    }
+  </script>
+</body>
+</html>
