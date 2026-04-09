@@ -15,7 +15,7 @@
   <h2>Dynamic Jinja `{% if / elif %}` Generator</h2>
 
   <label>Enter values (one per line):</label>
-  <textarea id="valuesInput" placeholder="100&#10;200&#10;300"></textarea>
+  <textarea id="valuesInput" placeholder="100&#10;120&#10;150"></textarea>
 
   <label>Enter attribute name (e.g., customer.fuse):</label>
   <input type="text" id="attributeInput" placeholder="customer.fuse" value="customer.fuse">
@@ -36,24 +36,22 @@
       }
 
       const values = valuesText.split('\n').map(v => v.trim()).filter(v => v);
-      if (values.length < 2) {
-        alert("Enter at least 2 values to generate sequential mapping.");
+      if (values.length < 1) {
+        alert("Enter at least 1 value to generate sequential mapping.");
         return;
       }
 
       let jinjaScript = "";
 
+      // First mapping: 0 -> first value
+      jinjaScript += `{% if ${attribute} == "0" %}\n  ${values[0]}\n`;
+
+      // Sequential mappings: value[i] -> value[i+1]
       for (let i = 0; i < values.length - 1; i++) {
-        const current = values[i];
-        const next = values[i + 1];
-        if (i === 0) {
-          jinjaScript += `{% if ${attribute} == "${current}" %}\n  ${next}\n`;
-        } else {
-          jinjaScript += `{% elif ${attribute} == "${current}" %}\n  ${next}\n`;
-        }
+        jinjaScript += `{% elif ${attribute} == "${values[i]}" %}\n  ${values[i + 1]}\n`;
       }
 
-      // Add default value as 0
+      // Default value as 0
       jinjaScript += `{% else %}\n  0\n{% endif %}`;
 
       document.getElementById('jinjaOutput').textContent = jinjaScript;
