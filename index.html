@@ -43,15 +43,15 @@
 
       let jinjaScript = "";
 
-      // First mapping: 0 -> first value
-      jinjaScript += `{% if ${attribute} == "0" %}\n  ${values[0]}\n`;
+      // First mapping: if "0" OR blank
+      jinjaScript += `{% if ${attribute} == "0" or ${attribute} == "" %}\n  ${values[0]}\n`;
 
-      // Sequential mappings: value[i] -> value[i+1]
+      // Sequential mappings
       for (let i = 0; i < values.length - 1; i++) {
         jinjaScript += `{% elif ${attribute} == "${values[i]}" %}\n  ${values[i + 1]}\n`;
       }
 
-      // Default value as 0
+      // Default value as 0 if nothing matches
       jinjaScript += `{% else %}\n  0\n{% endif %}`;
 
       document.getElementById('jinjaOutput').textContent = jinjaScript;
